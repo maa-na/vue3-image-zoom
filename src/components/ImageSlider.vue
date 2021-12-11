@@ -10,19 +10,12 @@
             @mouseleave="showZoomArea = false"
             @mousemove="zoomPreviewArea"
           >
-            <Carousel
-              ref="carousel"
-              :per-page="1"
-              :pagination-enabled="false"
-              :loop="true"
-            >
-              <Slide v-for="image in imageList" :key="image.id">
-                <img
-                  :src="imageList[showingImageIndex].url"
-                  class="center px-2 lg:px-0 product-image-current"
-                />
-              </Slide>
-            </Carousel>
+            <div class="product-image-content">
+              <img
+                :src="imageList[showingImageIndex].url"
+                class="center px-2 lg:px-0 product-image-current"
+              />
+            </div>
             <div
               v-if="showZoomArea"
               class="zoom-area hidden lg:block"
@@ -57,14 +50,8 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue';
-import 'vue3-carousel/dist/carousel.css';
-import { Carousel, Slide } from 'vue3-carousel';
 
 export default defineComponent({
-  components: {
-    Carousel,
-    Slide,
-  },
   props: {
     imageList: {
       type: Array as PropType<{ key: number | string }[]>,
@@ -76,9 +63,6 @@ export default defineComponent({
     const showingImageIndex = ref(0);
     const showZoomArea = ref(false);
     const onClick = (index: number): void => {
-      showingImageIndex.value = index;
-    };
-    const onPageChange = (index: number): void => {
       showingImageIndex.value = index;
     };
     const previewerImg = ref<{ [key: string]: string }>();
@@ -103,7 +87,7 @@ export default defineComponent({
       previewerArea.value = {
         width: `${productImageElementWidth}px`,
         height: `${productImageElementHeight}px`,
-        right: `-${productImageElementWidth + 4}px`,
+        right: `${productImageElementWidth - 50 + 4}px`,
       };
       const rectObj = productImageWrap?.getBoundingClientRect();
       const scrollX = window.pageXOffset;
@@ -145,7 +129,6 @@ export default defineComponent({
       carousel,
       showingImageIndex,
       onClick,
-      onPageChange,
       zoomArea,
       showZoomArea,
       previewerImg,
@@ -156,7 +139,7 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-.carousel {
+.product-image-content {
   width: 100%;
   @screen xl {
     width: 490px;
@@ -165,28 +148,6 @@ export default defineComponent({
 }
 table {
   @apply m-auto w-full;
-  td {
-    &:first-child,
-    &:last-child {
-      @apply w-16 bg-cover;
-    }
-    &:first-child {
-      @apply bg-right;
-    }
-    &:last-child {
-      @apply bg-left;
-    }
-  }
-  @screen lg {
-    td {
-      background-image: none !important;
-      &:first-child,
-      &:last-child {
-        @apply w-auto;
-      }
-    }
-    @apply w-auto;
-  }
 }
 img {
   &.center {
@@ -194,28 +155,6 @@ img {
     @screen xl {
       width: 490px;
       height: auto;
-    }
-  }
-  &.arrow {
-    @apply cursor-pointer absolute;
-    @screen lg {
-      @apply relative;
-    }
-  }
-  &.arrow-left {
-    left: 1rem;
-    @apply absolute;
-    @screen lg {
-      left: 0;
-      @apply relative mr-4;
-    }
-  }
-  &.arrow-right {
-    right: 1rem;
-    @apply absolute;
-    @screen lg {
-      right: 0;
-      @apply relative ml-4;
     }
   }
 }
@@ -246,14 +185,6 @@ img {
       height: 102px;
       @apply ml-0 mr-2 cursor-pointer;
     }
-  }
-}
-.page-num {
-  top: 4px;
-  right: 17px;
-  @apply absolute;
-  @screen lg {
-    right: 9px;
   }
 }
 .previewer-area {
