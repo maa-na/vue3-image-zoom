@@ -151,9 +151,6 @@ export default defineComponent({
     height: 550px;
   }
 }
-table {
-  @apply m-auto w-full;
-}
 img {
   &.center {
     width: 100%;
