@@ -62,12 +62,16 @@ export default defineComponent({
     const onClick = (index: number): void => {
       showingImageIndex.value = index;
     };
-
+    // 拡大された画像に適用するスタイル
     const previewerImg = ref<{ [key: string]: string }>();
-    const zoomArea = ref<{ [key: string]: string }>();
+    // 拡大された画像を囲んでいる部分に適用するスタイル
     const previewerArea = ref<{ [key: string]: string }>();
+    // 半透明部分に適用するスタイル
+    const zoomArea = ref<{ [key: string]: string }>();
+    // 元画像の上に出る半透明のエリアを設定する変数
     const leftPosition = ref(0);
     const topPosition = ref(0);
+    // 元画像の上に出る半透明のサイズ
     const sizeWidth = 250;
     const sizeHeight = 350;
 
@@ -86,7 +90,7 @@ export default defineComponent({
       previewerArea.value = {
         width: `${productImageElementWidth}px`,
         height: `${productImageElementHeight}px`,
-        right: `${productImageElementWidth - 80 + 4}px`,
+        right: `${productImageElementWidth - 76}px`,
       };
 
       const rectObj = productImageWrap?.getBoundingClientRect();
@@ -114,6 +118,7 @@ export default defineComponent({
       }
       const cutLeft = Math.floor((leftPosition.value / limitX) * 100);
       const cutTop = Math.floor((topPosition.value / limitY) * 100);
+
       zoomArea.value = {
         top: `${topPosition.value}px`,
         left: `${leftPosition.value}px`,
