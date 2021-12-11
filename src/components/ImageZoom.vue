@@ -1,44 +1,38 @@
 <template>
   <div class="relative">
-    <table class="ml-10">
-      <tbody>
-        <tr>
-          <td></td>
-          <td
-            class="relative product-image"
-            @mouseenter="showZoomArea = true"
-            @mouseleave="showZoomArea = false"
-            @mousemove="zoomPreviewArea"
-          >
-            <div class="product-image-content">
-              <img
-                :src="imageList[showingImageIndex].url"
-                class="center px-2 lg:px-0 product-image-current"
-              />
-            </div>
-            <div
-              v-if="showZoomArea"
-              class="zoom-area hidden lg:block"
-              :style="zoomArea"
+    <div class="lg:ml-10">
+      <div
+        class="relative product-image"
+        @mouseenter="showZoomArea = true"
+        @mouseleave="showZoomArea = false"
+        @mousemove="zoomPreviewArea"
+      >
+        <div class="product-image-content">
+          <img
+            :src="imageList[showingImageIndex].url"
+            class="center px-2 lg:px-0 product-image-current"
+          />
+        </div>
+        <div
+          v-if="showZoomArea"
+          class="zoom-area hidden lg:block"
+          :style="zoomArea"
+        />
+        <div
+          v-if="true"
+          class="previewer-area hidden lg:block"
+          :style="previewerArea"
+        >
+          <div class="previewer">
+            <img
+              :src="imageList[showingImageIndex].url"
+              :style="previewerImg"
             />
-            <div
-              v-if="true"
-              class="previewer-area hidden lg:block"
-              :style="previewerArea"
-            >
-              <div class="previewer">
-                <img
-                  :src="imageList[showingImageIndex].url"
-                  :style="previewerImg"
-                />
-              </div>
-              <div class="previewer-inner" />
-            </div>
-          </td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
+          </div>
+          <div class="previewer-inner" />
+        </div>
+      </div>
+    </div>
     <div class="list">
       <ul>
         <li v-for="(image, index) in imageList" :key="index">
@@ -59,12 +53,13 @@ export default defineComponent({
     },
   },
   setup() {
-    const carousel = ref();
     const showingImageIndex = ref(0);
     const showZoomArea = ref(false);
+
     const onClick = (index: number): void => {
       showingImageIndex.value = index;
     };
+
     const previewerImg = ref<{ [key: string]: string }>();
     const zoomArea = ref<{ [key: string]: string }>();
     const previewerArea = ref<{ [key: string]: string }>();
@@ -72,6 +67,7 @@ export default defineComponent({
     const topPosition = ref(0);
     const sizeWidth = 250;
     const sizeHeight = 350;
+
     const zoomPreviewArea = (event: MouseEvent): void => {
       const productImageWrap = document.querySelector('.product-image');
       const productImageElement = document.querySelector(
@@ -83,12 +79,13 @@ export default defineComponent({
         productImageElement?.getBoundingClientRect().height ?? 0;
       const limitX = productImageElementWidth - sizeWidth;
       const limitY = productImageElementHeight - sizeHeight;
-      // 画面幅によって商品画像のサイズが可変するので、プレビューのサイズも可変に
+
       previewerArea.value = {
         width: `${productImageElementWidth}px`,
         height: `${productImageElementHeight}px`,
-        right: `${productImageElementWidth - 50 + 4}px`,
+        right: `${productImageElementWidth - 80 + 4}px`,
       };
+
       const rectObj = productImageWrap?.getBoundingClientRect();
       const scrollX = window.pageXOffset;
       const scrollY = window.pageYOffset;
@@ -98,6 +95,7 @@ export default defineComponent({
       const offsetY = rectObj
         ? event.pageY - (rectObj.top + scrollY)
         : event.pageY;
+
       // ポインタの位置基準を中央にしている
       leftPosition.value = offsetX - sizeWidth / 2;
       topPosition.value = offsetY - sizeHeight / 2;
@@ -126,7 +124,6 @@ export default defineComponent({
       };
     };
     return {
-      carousel,
       showingImageIndex,
       onClick,
       zoomArea,
@@ -143,7 +140,7 @@ export default defineComponent({
   width: 100%;
   @screen xl {
     width: 490px;
-    height: 712px;
+    height: 550px;
   }
 }
 table {
