@@ -7,19 +7,22 @@
         @mouseleave="showZoomArea = false"
         @mousemove="zoomPreviewArea"
       >
+        <!-- 元の画像の表示 -->
         <div class="product-image-content">
           <img
             :src="imageList[showingImageIndex].url"
             class="center px-2 lg:px-0 product-image-current"
           />
         </div>
+        <!-- 元の画像の上でカーソルが動くときに表示される半透明の白い部分 -->
         <div
           v-if="showZoomArea"
           class="zoom-area hidden lg:block"
           :style="zoomArea"
         />
+        <!-- 拡大された画像 -->
         <div
-          v-if="true"
+          v-if="showZoomArea"
           class="previewer-area hidden lg:block"
           :style="previewerArea"
         >
