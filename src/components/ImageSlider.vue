@@ -1,28 +1,33 @@
 <template>
   <div class="relative">
-    <table v-if="imageList.length > 0">
+    <table class="ml-10">
       <tbody>
         <tr>
+          <td></td>
           <td
             class="relative product-image"
             @mouseenter="showZoomArea = true"
             @mouseleave="showZoomArea = false"
             @mousemove="zoomPreviewArea"
           >
-            <div>
-              <img
-                :src="imageList[showingImageIndex].url"
-                class="center px-2 lg:px-0 product-image-current"
-              />
-            </div>
+            <Carousel
+              ref="carousel"
+              :per-page="1"
+              :pagination-enabled="false"
+              :loop="true"
+            >
+              <Slide v-for="image in imageList" :key="image.id">
+                <img
+                  :src="imageList[showingImageIndex].url"
+                  class="center px-2 lg:px-0 product-image-current"
+                />
+              </Slide>
+            </Carousel>
             <div
               v-if="showZoomArea"
               class="zoom-area hidden lg:block"
               :style="zoomArea"
             />
-            <span class="caption1 page-num">{{
-              `${showingImageIndex + 1}/${imageList.length}`
-            }}</span>
             <div
               v-if="true"
               class="previewer-area hidden lg:block"
@@ -37,6 +42,7 @@
               <div class="previewer-inner" />
             </div>
           </td>
+          <td></td>
         </tr>
       </tbody>
     </table>
@@ -49,34 +55,39 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue';
+import 'vue3-carousel/dist/carousel.css';
+import { Carousel, Slide } from 'vue3-carousel';
 
 export default defineComponent({
-  name: 'ImageSlider',
+  components: {
+    Carousel,
+    Slide,
+  },
   props: {
     imageList: {
-      type: Array as PropType<{ id: number; url: string }[]>,
+      type: Array as PropType<{ key: number | string }[]>,
       default: (): [] => [],
     },
   },
   setup() {
+    const carousel = ref();
     const showingImageIndex = ref(0);
     const showZoomArea = ref(false);
-
     const onClick = (index: number): void => {
       showingImageIndex.value = index;
     };
-
-    const sizeWidth = 250;
-    const sizeHeight = 350;
+    const onPageChange = (index: number): void => {
+      showingImageIndex.value = index;
+    };
     const previewerImg = ref<{ [key: string]: string }>();
     const zoomArea = ref<{ [key: string]: string }>();
     const previewerArea = ref<{ [key: string]: string }>();
     const leftPosition = ref(0);
     const topPosition = ref(0);
-
+    const sizeWidth = 250;
+    const sizeHeight = 350;
     const zoomPreviewArea = (event: MouseEvent): void => {
       const productImageWrap = document.querySelector('.product-image');
       const productImageElement = document.querySelector(
@@ -88,7 +99,7 @@ export default defineComponent({
         productImageElement?.getBoundingClientRect().height ?? 0;
       const limitX = productImageElementWidth - sizeWidth;
       const limitY = productImageElementHeight - sizeHeight;
-      // 画面幅によって画像のサイズが可変するので、プレビューのサイズも可変に
+      // 画面幅によって商品画像のサイズが可変するので、プレビューのサイズも可変に
       previewerArea.value = {
         width: `${productImageElementWidth}px`,
         height: `${productImageElementHeight}px`,
@@ -125,25 +136,27 @@ export default defineComponent({
       previewerImg.value = {
         'object-fit': 'none',
         'object-position': `${cutLeft}% ${cutTop}%`,
+        width: `${productImageElementWidth / 2}px`,
+        transform: `scale(2.0)`,
+        'transform-origin': 'top left',
       };
-      console.log(previewerImg.value)
     };
-
     return {
+      carousel,
       showingImageIndex,
-      showZoomArea,
       onClick,
-      zoomPreviewArea,
-      previewerImg,
+      onPageChange,
       zoomArea,
+      showZoomArea,
+      previewerImg,
+      zoomPreviewArea,
       previewerArea,
     };
   },
 });
 </script>
-
 <style lang="scss" scoped>
-.VueCarousel {
+.carousel {
   width: 100%;
   @screen xl {
     width: 490px;
@@ -152,7 +165,26 @@ export default defineComponent({
 }
 table {
   @apply m-auto w-full;
+  td {
+    &:first-child,
+    &:last-child {
+      @apply w-16 bg-cover;
+    }
+    &:first-child {
+      @apply bg-right;
+    }
+    &:last-child {
+      @apply bg-left;
+    }
+  }
   @screen lg {
+    td {
+      background-image: none !important;
+      &:first-child,
+      &:last-child {
+        @apply w-auto;
+      }
+    }
     @apply w-auto;
   }
 }
@@ -162,6 +194,28 @@ img {
     @screen xl {
       width: 490px;
       height: auto;
+    }
+  }
+  &.arrow {
+    @apply cursor-pointer absolute;
+    @screen lg {
+      @apply relative;
+    }
+  }
+  &.arrow-left {
+    left: 1rem;
+    @apply absolute;
+    @screen lg {
+      left: 0;
+      @apply relative mr-4;
+    }
+  }
+  &.arrow-right {
+    right: 1rem;
+    @apply absolute;
+    @screen lg {
+      right: 0;
+      @apply relative ml-4;
     }
   }
 }
